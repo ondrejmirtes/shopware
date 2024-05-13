@@ -54,7 +54,7 @@ class PayloadService
                 $transactionId = $payload->getOrderTransaction()->getId();
             }
 
-            return $responseClass::create($transactionId, json_decode($content, true, 512, \JSON_THROW_ON_ERROR));
+            return $responseClass::create(json_decode($content, true, 512, \JSON_THROW_ON_ERROR));
         } catch (GuzzleException) {
             return null;
         }

@@ -7,16 +7,17 @@ use PHPUnit\Framework\TestCase;
 use Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionEntity;
 use Shopware\Core\Checkout\Order\OrderEntity;
 use Shopware\Core\Checkout\Payment\Cart\Recurring\RecurringDataStruct;
-use Shopware\Core\Framework\App\Payment\Payload\Struct\AsyncPayPayload;
+use Shopware\Core\Framework\App\Payment\Payload\Struct\PaymentPayload;
 use Shopware\Core\Framework\App\Payment\Payload\Struct\Source;
+use Shopware\Core\Framework\Feature;
 use Shopware\Core\Framework\Log\Package;
 
 /**
  * @internal
  */
 #[Package('checkout')]
-#[CoversClass(AsyncPayPayload::class)]
-class AsyncPayPayloadTest extends TestCase
+#[CoversClass(PaymentPayload::class)]
+class PaymentPayloadTest extends TestCase
 {
     public function testPayload(): void
     {
@@ -27,14 +28,18 @@ class AsyncPayPayloadTest extends TestCase
         $recurring = new RecurringDataStruct('foo', new \DateTime());
         $source = new Source('foo', 'bar', '1.0.0');
 
-        $payload = new AsyncPayPayload($transaction, $order, $returnUrl, $requestData, $recurring);
+        $payload = new PaymentPayload($transaction, $order, $requestData, $returnUrl, $recurring);
         $payload->setSource($source);
 
-        static::assertEquals($transaction, $payload->getOrderTransaction());
+        static::assertSame($transaction, $payload->getOrderTransaction());
         static::assertSame($order, $payload->getOrder());
         static::assertSame($returnUrl, $payload->getReturnUrl());
         static::assertSame($requestData, $payload->getRequestData());
         static::assertSame($recurring, $payload->getRecurring());
         static::assertSame($source, $payload->getSource());
+
+        if (!Feature::isActive('v6.7.0.0')) {
+            static::assertSame($requestData, $payload->jsonSerialize()['queryParameters']);
+        }
     }
 }

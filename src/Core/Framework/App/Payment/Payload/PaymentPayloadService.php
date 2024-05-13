@@ -47,12 +47,7 @@ class PaymentPayloadService
 
         $content = $response->getBody()->getContents();
 
-        $transactionId = null;
-        if ($payload instanceof PaymentPayloadInterface) {
-            $transactionId = $payload->getOrderTransaction()->getId();
-        }
-
-        return $responseClass::create($transactionId, \json_decode($content, true, 512, \JSON_THROW_ON_ERROR));
+        return $responseClass::create(\json_decode($content, true, 512, \JSON_THROW_ON_ERROR));
     }
 
     /**
