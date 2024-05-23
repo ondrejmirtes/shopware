@@ -263,17 +263,17 @@ class NavigationRouteChange {
         $navigation = $this->route->header(
             request: new Request(),
             context: $context
-        );
+        )->getObject();
         
         $footer = $this->route->footer(
             request: new Request(),
             context: $context
-        );
+        )->getObject();
         
         $service = $this->route->service(
             request: new Request(),
             context: $context
-        );
+        )->getObject();
         
         assert($navigation instanceof Navigation);
         assert($service instanceof Navigation);

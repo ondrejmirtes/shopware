@@ -5,6 +5,7 @@ namespace Shopware\Core\Content\Category\SalesChannel;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
+use Shopware\Core\System\SalesChannel\StoreApiResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -18,17 +19,17 @@ abstract class AbstractNavigationRoute
 {
     abstract public function getDecorated(): AbstractNavigationRoute;
 
-    public function header(Request $request, SalesChannelContext $context)
+    public function header(Request $request, SalesChannelContext $context): StoreApiResponse
     {
         return $this->getDecorated()->header($request, $context);
     }
 
-    public function footer(Request $request, SalesChannelContext $context)
+    public function footer(Request $request, SalesChannelContext $context): StoreApiResponse
     {
         return $this->getDecorated()->footer($request, $context);
     }
 
-    public function service(Request $request, SalesChannelContext $context)
+    public function service(Request $request, SalesChannelContext $context): StoreApiResponse
     {
         return $this->getDecorated()->service($request, $context);
     }

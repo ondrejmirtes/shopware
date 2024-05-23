@@ -61,7 +61,7 @@ class FooterPageletLoader implements FooterPageletLoaderInterface
     public function loadFooterNavigation(Request $request, SalesChannelContext $context): Tree|Navigation|null
     {
         if (Feature::isActive('cache_rework')) {
-            return $this->navigationRoute->footer($request, $context);
+            return $this->navigationRoute->footer($request, $context)->getObject();
         }
 
         $footerId = $context->getSalesChannel()->getFooterCategoryId();
@@ -107,6 +107,6 @@ class FooterPageletLoader implements FooterPageletLoaderInterface
             return null;
         }
 
-        return $this->navigationRoute->service($request, $context);
+        return $this->navigationRoute->service($request, $context)->getObject();
     }
 }

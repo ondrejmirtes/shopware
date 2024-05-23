@@ -28,6 +28,7 @@ use Shopware\Core\Framework\Plugin\Exception\DecorationPatternException;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\System\SalesChannel\Entity\SalesChannelRepository;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
+use Shopware\Core\System\SalesChannel\StoreApiResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -83,7 +84,7 @@ class NavigationRoute extends AbstractNavigationRoute
     }
 
     #[Route(path: '/store-api/header', name: 'store-api.header', methods: ['GET'])]
-    public function header(Request $request, SalesChannelContext $context): Navigation
+    public function header(Request $request, SalesChannelContext $context): StoreApiResponse
     {
         $main = $this->connection->fetchAssociative(
             'SELECT LOWER(HEX(navigation_category_id)) as id, navigation_category_depth as depth FROM sales_channel WHERE id = :id',
@@ -99,7 +100,7 @@ class NavigationRoute extends AbstractNavigationRoute
     }
 
     #[Route(path: '/store-api/footer', name: 'store-api.footer', methods: ['GET'])]
-    public function footer(Request $request, SalesChannelContext $context): Navigation
+    public function footer(Request $request, SalesChannelContext $context): StoreApiResponse
     {
         $id = $this->connection->fetchOne(
             'SELECT LOWER(HEX(footer_category_id)) as id FROM sales_channel WHERE id = :id',
@@ -112,14 +113,14 @@ class NavigationRoute extends AbstractNavigationRoute
         ));
 
         if ($id === null) {
-            return new Navigation(root: '', items: []);
+            return new StoreApiResponse(new Navigation(root: '', items: []));
         }
 
         return $this->fetch($id, 2, $context);
     }
 
     #[Route(path: '/store-api/service', name: 'store-api.service', methods: ['GET'])]
-    public function service(Request $request, SalesChannelContext $context): Navigation
+    public function service(Request $request, SalesChannelContext $context): StoreApiResponse
     {
         $id = $this->connection->fetchOne(
             'SELECT LOWER(HEX(service_category_id)) as id FROM sales_channel WHERE id = :id',
@@ -132,7 +133,7 @@ class NavigationRoute extends AbstractNavigationRoute
         ));
 
         if ($id === null) {
-            return new Navigation(root: '', items: []);
+            return new StoreApiResponse(new Navigation(root: '', items: []));
         }
 
         return $this->fetch($id, 2, $context);
@@ -181,7 +182,7 @@ class NavigationRoute extends AbstractNavigationRoute
         return new NavigationRouteResponse($categories);
     }
 
-    private function fetch(string $root, int $depth, SalesChannelContext $context): Navigation
+    private function fetch(string $root, int $depth, SalesChannelContext $context): StoreApiResponse
     {
         $meta = $this->connection->fetchAssociative(
             'SELECT LOWER(HEX(`id`)), `path`, `level` FROM `category` WHERE `id` = :id',
@@ -255,7 +256,7 @@ class NavigationRoute extends AbstractNavigationRoute
             $item->children = $mapping[$item->id] ?? [];
         }
 
-        return new Navigation(root: $root, items: $mapping[$root] ?? []);
+        return new StoreApiResponse(new Navigation(root: $root, items: $mapping[$root] ?? []));
     }
 
     /**

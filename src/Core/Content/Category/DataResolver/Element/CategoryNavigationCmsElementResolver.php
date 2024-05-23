@@ -32,8 +32,10 @@ class CategoryNavigationCmsElementResolver extends AbstractCmsElementResolver
         if (!Feature::isActive('cache_rework')) {
             return;
         }
-        $slot->setData(
-            $this->route->header(new Request(), $resolverContext->getSalesChannelContext())
-        );
+        $header = $this->route
+            ->header(new Request(), $resolverContext->getSalesChannelContext())
+            ->getObject();
+
+        $slot->setData($header);
     }
 }

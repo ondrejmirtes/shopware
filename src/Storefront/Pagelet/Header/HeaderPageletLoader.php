@@ -62,7 +62,7 @@ class HeaderPageletLoader implements HeaderPageletLoaderInterface
     public function loadNavigation(Request $request, SalesChannelContext $context): mixed
     {
         if (Feature::isActive('cache_rework')) {
-            return $this->navigationRoute->header(request: $request, context: $context);
+            return $this->navigationRoute->header(request: $request, context: $context)->getObject();
         }
 
         return $this->navigationLoader->load(
