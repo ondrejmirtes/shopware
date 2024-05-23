@@ -14,12 +14,12 @@ abstract class NavigationPagelet extends Pagelet
      */
     protected $navigation;
 
-    public function __construct(null|Tree|Navigation $navigation)
+    public function __construct(Tree|Navigation|null $navigation)
     {
         $this->navigation = $navigation;
     }
 
-    public function getNavigation(): null|Tree|Navigation
+    public function getNavigation(): Tree|Navigation|null
     {
         return $this->navigation;
     }

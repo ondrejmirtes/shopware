@@ -58,7 +58,7 @@ class FooterPageletLoader implements FooterPageletLoaderInterface
         return $footer;
     }
 
-    public function loadFooterNavigation(Request $request, SalesChannelContext $context): Tree|null|Navigation
+    public function loadFooterNavigation(Request $request, SalesChannelContext $context): Tree|Navigation|null
     {
         if (Feature::isActive('cache_rework')) {
             return $this->navigationRoute->footer($request, $context);

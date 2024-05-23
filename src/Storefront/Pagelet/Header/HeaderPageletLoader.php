@@ -73,7 +73,7 @@ class HeaderPageletLoader implements HeaderPageletLoaderInterface
         );
     }
 
-    private function getServiceMenu(SalesChannelContext $context): null|CategoryCollection|Navigation
+    private function getServiceMenu(SalesChannelContext $context): CategoryCollection|Navigation|null
     {
         if (Feature::isActive('cache_rework')) {
             return null;

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Shopware\Core\Framework\Adapter\Command;
 
@@ -16,13 +16,11 @@ class CacheWatchDelayedCommand extends Command
 {
     /**
      * @param \Redis|\RedisCluster $redis
-     * @param $redis
      */
     public function __construct(
         private readonly EventDispatcherInterface $dispatcher,
         private $redis
-    )
-    {
+    ) {
         parent::__construct();
     }
 
@@ -32,7 +30,7 @@ class CacheWatchDelayedCommand extends Command
             $signal = $event->getHandlingSignal();
             $event->setExitCode(0);
 
-            if (\SIGINT === $signal) {
+            if ($signal === \SIGINT) {
                 $event->getOutput()->writeln('Cache is now on its own.. bye!');
             }
         });
@@ -45,7 +43,7 @@ class CacheWatchDelayedCommand extends Command
         while (true) {
             $current = $this->redis->sMembers('invalidation');
 
-            if ($before != $current) {
+            if ($before !== $current) {
                 $this->render($table, $current);
                 $before = $current;
             }

@@ -48,7 +48,7 @@ class HeaderPagelet extends NavigationPagelet
         Tree|Navigation $navigation,
         LanguageCollection $languages,
         CurrencyCollection $currencies,
-        CategoryCollection|null $serviceMenu,
+        ?CategoryCollection $serviceMenu,
         // @deprecated tag:v6.7.0 - remove
         SalesChannelContext $context
     ) {
@@ -82,7 +82,7 @@ class HeaderPagelet extends NavigationPagelet
         return $this->activeCurrency;
     }
 
-    public function getServiceMenu(): CategoryCollection|null
+    public function getServiceMenu(): ?CategoryCollection
     {
         return $this->serviceMenu;
     }
