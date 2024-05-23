@@ -76,6 +76,7 @@ class CategoryIndexer extends EntityIndexer
         }
 
         $ids = $categoryEvent->getIds();
+        $parentIds = [];
         $idsWithChangedParentIds = [];
         foreach ($categoryEvent->getWriteResults() as $result) {
             if (!$result->getExistence()) {
@@ -84,13 +85,13 @@ class CategoryIndexer extends EntityIndexer
             $state = $result->getExistence()->getState();
 
             if (isset($state['parent_id'])) {
-                $ids[] = Uuid::fromBytesToHex($state['parent_id']);
+                $parentIds[] = Uuid::fromBytesToHex($state['parent_id']);
             }
 
             $payload = $result->getPayload();
             if (\array_key_exists('parentId', $payload)) {
                 if ($payload['parentId'] !== null) {
-                    $ids[] = $payload['parentId'];
+                    $parentIds[] = $payload['parentId'];
                 }
                 $idsWithChangedParentIds[] = $payload['id'];
             }
@@ -110,8 +111,13 @@ class CategoryIndexer extends EntityIndexer
         }
 
         if (Feature::isActive('cache_rework')) {
+            if (!empty($parentIds)) {
+                $this->childCountUpdater->update(CategoryDefinition::ENTITY_NAME, $parentIds, $event->getContext());
+            }
+
             return new CategoryIndexingMessage($categoryEvent->getIds(), null, $event->getContext());
         }
+        $ids = array_unique(array_merge($ids, $parentIds));
 
         $children = $this->fetchChildren($ids, $event->getContext()->getVersionId());
 
