@@ -82,6 +82,7 @@ class NavigationRoute extends AbstractNavigationRoute
         return 'navigation-route-' . $id;
     }
 
+    #[Route(path: '/store-api/header', name: 'store-api.header', methods: ['GET'])]
     public function header(Request $request, SalesChannelContext $context): Navigation
     {
         $main = $this->connection->fetchAssociative(
@@ -97,6 +98,7 @@ class NavigationRoute extends AbstractNavigationRoute
         return $this->fetch($main['id'], (int) $main['depth'], $context);
     }
 
+    #[Route(path: '/store-api/footer', name: 'store-api.footer', methods: ['GET'])]
     public function footer(Request $request, SalesChannelContext $context): Navigation
     {
         $id = $this->connection->fetchOne(
@@ -116,6 +118,7 @@ class NavigationRoute extends AbstractNavigationRoute
         return $this->fetch($id, 2, $context);
     }
 
+    #[Route(path: '/store-api/service', name: 'store-api.service', methods: ['GET'])]
     public function service(Request $request, SalesChannelContext $context): Navigation
     {
         $id = $this->connection->fetchOne(

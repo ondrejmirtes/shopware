@@ -27,4 +27,9 @@ class NavigationItem extends Struct
         public array $children = []
     ) {
     }
+
+    public function getApiAlias(): string
+    {
+        return 'navigation_item';
+    }
 }
