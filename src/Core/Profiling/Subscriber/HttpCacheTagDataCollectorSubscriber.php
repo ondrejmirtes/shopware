@@ -84,7 +84,7 @@ class HttpCacheTagDataCollectorSubscriber extends AbstractDataCollector implemen
                 self::$tags[$uri][$tag] = [];
             }
 
-            if (!isset(self::$tags[$tag][$caller])) {
+            if (!isset(self::$tags[$uri][$tag][$caller])) {
                 self::$tags[$uri][$tag][$caller] = 0;
             }
 
@@ -153,12 +153,18 @@ class HttpCacheTagDataCollectorSubscriber extends AbstractDataCollector implemen
 
         $second = $keys[1];
 
-        foreach ($na as $caller => $count) {
-            if (!isset($tags[$second][$caller])) {
-                $tags[$second][$caller] = 0;
-            }
+        foreach ($na as $tag => $callers) {
+            foreach ($callers as $caller => $count) {
+                if (!isset($tags[$second][$tag])) {
+                    $tags[$second][$tag] = [];
+                }
 
-            $tags[$second][$caller] += $count;
+                if (!isset($tags[$second][$tag][$caller])) {
+                    $tags[$second][$tag][$caller] = 0;
+                }
+
+                $tags[$second][$tag][$caller] += $count;
+            }
         }
 
         return $tags;

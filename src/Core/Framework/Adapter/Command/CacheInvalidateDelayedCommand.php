@@ -15,7 +15,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 #[Package('core')]
 class CacheInvalidateDelayedCommand extends Command
 {
-    public function __construct(private readonly CacheInvalidator $invalidator)
+    public function __construct(
+        private readonly CacheInvalidator $invalidator
+    )
     {
         parent::__construct();
     }
