@@ -18,6 +18,21 @@ abstract class AbstractNavigationRoute
 {
     abstract public function getDecorated(): AbstractNavigationRoute;
 
+    public function header(Request $request, SalesChannelContext $context)
+    {
+        return $this->getDecorated()->header($request, $context);
+    }
+
+    public function footer(Request $request, SalesChannelContext $context)
+    {
+        return $this->getDecorated()->footer($request, $context);
+    }
+
+    public function service(Request $request, SalesChannelContext $context)
+    {
+        return $this->getDecorated()->service($request, $context);
+    }
+
     abstract public function load(
         string $activeId,
         string $rootId,
