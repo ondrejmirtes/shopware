@@ -70,12 +70,11 @@ class GenericPageLoader implements GenericPageLoaderInterface
                     $this->headerLoader->load($request, $context)
                 );
 
-                $page->setFooter(
-                    $this->footerLoader->load($request, $context)
-                );
+                $footer = $this->footerLoader->load($request, $context);
+                $footer->paymentMethods = $page->getSalesChannelPaymentMethods();
+                $footer->shippingMethods = $page->getSalesChannelShippingMethods();
 
-                $page->getFooter()->paymentMethods = $page->getSalesChannelPaymentMethods();
-                $page->getFooter()->shippingMethods = $page->getSalesChannelShippingMethods();
+                $page->setFooter($footer);
             }
 
             $this->eventDispatcher->dispatch(

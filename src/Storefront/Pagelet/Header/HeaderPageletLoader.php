@@ -3,7 +3,6 @@
 namespace Shopware\Storefront\Pagelet\Header;
 
 use Shopware\Core\Content\Category\CategoryCollection;
-use Shopware\Core\Content\Category\Dto\Navigation;
 use Shopware\Core\Content\Category\SalesChannel\AbstractNavigationRoute;
 use Shopware\Core\Content\Category\Service\NavigationLoaderInterface;
 use Shopware\Core\Content\Category\Tree\TreeItem;
@@ -73,7 +72,7 @@ class HeaderPageletLoader implements HeaderPageletLoaderInterface
         );
     }
 
-    private function getServiceMenu(SalesChannelContext $context): CategoryCollection|Navigation|null
+    private function getServiceMenu(SalesChannelContext $context): ?CategoryCollection
     {
         if (Feature::isActive('cache_rework')) {
             return null;

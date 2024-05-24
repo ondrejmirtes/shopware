@@ -12,6 +12,7 @@ use Shopware\Core\System\Language\LanguageCollection;
 use Shopware\Core\System\Language\LanguageEntity;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
 use Shopware\Storefront\Pagelet\NavigationPagelet;
+use Shopware\Storefront\StorefrontException;
 
 #[Package('storefront')]
 class HeaderPagelet extends NavigationPagelet
@@ -56,8 +57,19 @@ class HeaderPagelet extends NavigationPagelet
         $this->currencies = $currencies;
         $this->serviceMenu = $serviceMenu;
 
-        $this->activeLanguage = $languages->get($context->getLanguageId());
-        $this->activeCurrency = $currencies->get($context->getCurrencyId());
+        $activeLanguage = $languages->get($context->getLanguageId());
+        $activeCurrency = $currencies->get($context->getCurrencyId());
+
+        if (!$activeCurrency) {
+            throw StorefrontException::noActiveCurrency();
+        }
+
+        if (!$activeLanguage) {
+            throw StorefrontException::noActiveLanguage();
+        }
+
+        $this->activeCurrency = $activeCurrency;
+        $this->activeLanguage = $activeLanguage;
 
         parent::__construct($navigation);
     }

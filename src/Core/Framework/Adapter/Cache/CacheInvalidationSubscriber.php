@@ -25,6 +25,7 @@ use Shopware\Core\Content\Product\Aggregate\ProductProperty\ProductPropertyDefin
 use Shopware\Core\Content\Product\Events\InvalidateProductCache;
 use Shopware\Core\Content\Product\Events\ProductChangedEventInterface;
 use Shopware\Core\Content\Product\ProductDefinition;
+use Shopware\Core\Content\Product\SalesChannel\CrossSelling\CachedProductCrossSellingRoute;
 use Shopware\Core\Content\Product\SalesChannel\CrossSelling\ProductCrossSellingRoute;
 use Shopware\Core\Content\Product\SalesChannel\Detail\ProductDetailRoute;
 use Shopware\Core\Content\Product\SalesChannel\Listing\ProductListingRoute;
@@ -141,11 +142,6 @@ class CacheInvalidationSubscriber
         if (!$snippets) {
             return;
         }
-        if (!$this->fineGrainedCacheSnippet) {
-            $this->cacheInvalidator->invalidate(['shopware.translator']);
-
-            return;
-        }
 
         if (Feature::isActive('cache_rework')) {
             $this->cacheInvalidator->invalidate(['shopware.theme', 'shopware.translator']);
@@ -183,6 +179,10 @@ class CacheInvalidationSubscriber
             return;
         }
 
+        Feature::triggerDeprecationOrThrow(
+            'v6.7.0.0',
+            Feature::deprecatedMethodMessage(self::class, __FUNCTION__, 'v6.7.0.0')
+        );
         // invalidates the rule loader each time a rule changed or a plugin install state changed
         $this->cacheInvalidator->invalidate([CachedRuleLoader::CACHE_KEY]);
     }
@@ -204,6 +204,10 @@ class CacheInvalidationSubscriber
             return;
         }
 
+        Feature::triggerDeprecationOrThrow(
+            'v6.7.0.0',
+            Feature::deprecatedMethodMessage(self::class, __FUNCTION__, 'v6.7.0.0')
+        );
         // invalidates all routes which loads products in nested unknown objects, like cms listing elements or cross selling elements
         $this->cacheInvalidator->invalidate(
             array_map(EntityCacheKeyGenerator::buildProductTag(...), $event->getIds())
@@ -274,6 +278,10 @@ class CacheInvalidationSubscriber
         if (Feature::isActive('cache_rework')) {
             return;
         }
+        Feature::triggerDeprecationOrThrow(
+            'v6.7.0.0',
+            Feature::deprecatedMethodMessage(self::class, __FUNCTION__, 'v6.7.0.0')
+        );
         // invalidates the product listing route each time a category changed
         $this->cacheInvalidator->invalidate(array_map([ProductListingRoute::class, 'buildName'], $event->getIds()));
     }
@@ -282,7 +290,7 @@ class CacheInvalidationSubscriber
     {
         // invalidates the landing page route, if the corresponding landing page changed
         /** @var list<string> $ids */
-        $ids = array_map([LandingPageRoute::class, 'buildName'], $event->getIds());
+        $ids = array_map(LandingPageRoute::buildName(...), $event->getIds());
         $this->cacheInvalidator->invalidate($ids);
     }
 
@@ -347,6 +355,10 @@ class CacheInvalidationSubscriber
             return;
         }
 
+        Feature::triggerDeprecationOrThrow(
+            'v6.7.0.0',
+            Feature::deprecatedMethodMessage(self::class, __FUNCTION__, 'v6.7.0.0')
+        );
         // invalidates the navigation route when a category changed or the entry point configuration of an sales channel changed
         $logs = [...$this->getChangedCategories($event), ...$this->getChangedEntryPoints($event)];
 
@@ -361,12 +373,19 @@ class CacheInvalidationSubscriber
         $this->cacheInvalidator->invalidate($logs);
     }
 
+    /**
+     * @deprecated tag:v6.7.0 - Will be removed, use invalidateProduct instead
+     */
     public function invalidateSearch(): void
     {
         if (Feature::isActive('cache_rework')) {
             return;
         }
 
+        Feature::triggerDeprecationOrThrow(
+            'v6.7.0.0',
+            Feature::deprecatedMethodMessage(self::class, __FUNCTION__, 'v6.7.0.0')
+        );
         // invalidates the search and suggest route each time a product changed
         $this->cacheInvalidator->invalidate([
             'product-suggest-route',
@@ -383,6 +402,10 @@ class CacheInvalidationSubscriber
             return;
         }
 
+        Feature::triggerDeprecationOrThrow(
+            'v6.7.0.0',
+            Feature::deprecatedMethodMessage(self::class, __FUNCTION__, 'v6.7.0.0')
+        );
         /** @var list<string> $parentIds */
         $parentIds = $this->connection->fetchFirstColumn(
             'SELECT DISTINCT(LOWER(HEX(parent_id))) FROM product WHERE id IN (:ids) AND parent_id IS NOT NULL AND version_id = :version',
@@ -431,6 +454,10 @@ class CacheInvalidationSubscriber
             // @deprecated tag:v6.7.0 - remove also event listener
             return;
         }
+        Feature::triggerDeprecationOrThrow(
+            'v6.7.0.0',
+            Feature::deprecatedMethodMessage(self::class, __FUNCTION__, 'v6.7.0.0')
+        );
         // invalidates the product listing route, each time a product - category assignment changed
         $ids = $event->getPrimaryKeys(ProductCategoryDefinition::ENTITY_NAME);
 
@@ -522,6 +549,10 @@ class CacheInvalidationSubscriber
             // @deprecated tag:v6.7.0 - remove also event listener
             return;
         }
+        Feature::triggerDeprecationOrThrow(
+            'v6.7.0.0',
+            Feature::deprecatedMethodMessage(self::class, __FUNCTION__, 'v6.7.0.0')
+        );
 
         $this->cacheInvalidator->invalidate(
             array_map([ProductReviewRoute::class, 'buildName'], $event->getIds())
@@ -538,6 +569,10 @@ class CacheInvalidationSubscriber
             return;
         }
 
+        Feature::triggerDeprecationOrThrow(
+            'v6.7.0.0',
+            Feature::deprecatedMethodMessage(self::class, __FUNCTION__, 'v6.7.0.0')
+        );
         // invalidates product listings which are based on the product category assignment
         $this->cacheInvalidator->invalidate(
             array_map([ProductListingRoute::class, 'buildName'], $this->getProductCategoryIds($event->getIds()))
@@ -578,6 +613,12 @@ class CacheInvalidationSubscriber
             return;
         }
 
+
+        Feature::triggerDeprecationOrThrow(
+            'v6.7.0.0',
+            Feature::deprecatedMethodMessage(self::class, __FUNCTION__, 'v6.7.0.0')
+        );
+
         // invalidates all stream based pages and routes after the product indexer changes product_stream_mapping
         $ids = $this->connection->fetchFirstColumn(
             'SELECT DISTINCT LOWER(HEX(product_stream_id))
@@ -603,6 +644,11 @@ class CacheInvalidationSubscriber
             return;
         }
 
+        Feature::triggerDeprecationOrThrow(
+            'v6.7.0.0',
+            Feature::deprecatedMethodMessage(self::class, __FUNCTION__, 'v6.7.0.0')
+        );
+
         // invalidates the product detail route for the changed cross selling definitions
         $ids = $event->getPrimaryKeys(ProductCrossSellingDefinition::ENTITY_NAME);
 
@@ -617,10 +663,13 @@ class CacheInvalidationSubscriber
         );
 
         $this->cacheInvalidator->invalidate(
-            array_map([ProductCrossSellingRoute::class, 'buildName'], $ids)
+            array_map(CachedProductCrossSellingRoute::buildName(...), $ids)
         );
     }
 
+    /**
+     * @return array<string>
+     */
     private function getChangedEntryPointsNew(EntityWrittenContainerEvent $event): array
     {
         $header = $event->getPrimaryKeysWithPropertyChange(SalesChannelDefinition::ENTITY_NAME, ['navigationCategoryId', 'navigationCategoryDepth']);
@@ -636,6 +685,9 @@ class CacheInvalidationSubscriber
         );
     }
 
+    /**
+     * @return array<mixed>
+     */
     private function getChangedNavigationCategories(EntityWrittenContainerEvent $event): array
     {
         $categories = $event->getPrimaryKeys(CategoryDefinition::ENTITY_NAME);

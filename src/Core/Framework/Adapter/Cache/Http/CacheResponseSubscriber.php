@@ -46,6 +46,7 @@ class CacheResponseSubscriber implements EventSubscriberInterface
     ];
 
     /**
+     * @param array<string> $cookies
      * @internal
      */
     public function __construct(

@@ -101,6 +101,7 @@
         <service id="Shopware\Storefront\Theme\ThemeConfigValueAccessor">
             <argument type="service" id="Shopware\Storefront\Theme\ResolvedConfigLoader"/>
             <argument>%shopware.cache.tagging.each_theme_config%</argument>
+            <argument type="service" id="event_dispatcher"/>
         </service>
 
         <service id="Shopware\Storefront\Framework\Twig\Extension\ConfigExtension">

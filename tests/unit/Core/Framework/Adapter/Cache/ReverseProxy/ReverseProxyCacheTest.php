@@ -5,6 +5,7 @@ namespace Shopware\Tests\Unit\Core\Framework\Adapter\Cache\ReverseProxy;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Shopware\Core\Framework\Adapter\Cache\AbstractCacheTracer;
+use Shopware\Core\Framework\Adapter\Cache\CacheTagCollector;
 use Shopware\Core\Framework\Adapter\Cache\CacheTracer;
 use Shopware\Core\Framework\Adapter\Cache\Http\CacheResponseSubscriber;
 use Shopware\Core\Framework\Adapter\Cache\Http\CacheStore;
@@ -27,7 +28,7 @@ class ReverseProxyCacheTest extends TestCase
 
         $gateway->expects(static::once())->method('flush');
 
-        $cache = new ReverseProxyCache($gateway, $this->createMock(AbstractCacheTracer::class), []);
+        $cache = new ReverseProxyCache($gateway, $this->createMock(AbstractCacheTracer::class), [], $this->createMock(CacheTagCollector::class));
 
         // this is the only way to call the destructor
         unset($cache);
@@ -42,7 +43,7 @@ class ReverseProxyCacheTest extends TestCase
             ->method('tag')
             ->with(['foo']);
 
-        $cache = new ReverseProxyCache($gateway, $this->createMock(AbstractCacheTracer::class), []);
+        $cache = new ReverseProxyCache($gateway, $this->createMock(AbstractCacheTracer::class), [], $this->createMock(CacheTagCollector::class));
 
         $response = new Response();
         $response->headers->set(CacheStore::TAG_HEADER, '["foo"]');
@@ -58,7 +59,7 @@ class ReverseProxyCacheTest extends TestCase
      */
     public function testLookup(): void
     {
-        $store = new ReverseProxyCache($this->createMock(AbstractReverseProxyGateway::class), $this->createMock(CacheTracer::class), []);
+        $store = new ReverseProxyCache($this->createMock(AbstractReverseProxyGateway::class), $this->createMock(CacheTracer::class), [], $this->createMock(CacheTagCollector::class));
         static::assertNull($store->lookup(new Request()));
         static::assertFalse($store->isLocked(new Request()));
         static::assertTrue($store->lock(new Request()));
@@ -68,7 +69,12 @@ class ReverseProxyCacheTest extends TestCase
 
     public function testWriteAddsGlobalStates(): void
     {
-        $store = new ReverseProxyCache($this->createMock(AbstractReverseProxyGateway::class), $this->createMock(CacheTracer::class), [CacheResponseSubscriber::STATE_LOGGED_IN]);
+        $store = new ReverseProxyCache(
+            $this->createMock(AbstractReverseProxyGateway::class),
+            $this->createMock(CacheTracer::class),
+            [CacheResponseSubscriber::STATE_LOGGED_IN],
+            $this->createMock(CacheTagCollector::class)
+        );
 
         $request = new Request();
         $request->attributes->set(RequestTransformer::ORIGINAL_REQUEST_URI, '/foo');
@@ -83,7 +89,7 @@ class ReverseProxyCacheTest extends TestCase
     {
         $gateway = $this->createMock(AbstractReverseProxyGateway::class);
         $gateway->expects(static::once())->method('ban')->with(['/foo']);
-        $store = new ReverseProxyCache($gateway, $this->createMock(CacheTracer::class), []);
+        $store = new ReverseProxyCache($gateway, $this->createMock(CacheTracer::class), [], $this->createMock(CacheTagCollector::class));
 
         $store->purge('/foo');
     }
@@ -92,7 +98,7 @@ class ReverseProxyCacheTest extends TestCase
     {
         $gateway = $this->createMock(AbstractReverseProxyGateway::class);
         $gateway->expects(static::never())->method('ban');
-        $store = new ReverseProxyCache($gateway, $this->createMock(CacheTracer::class), []);
+        $store = new ReverseProxyCache($gateway, $this->createMock(CacheTracer::class), [], $this->createMock(CacheTagCollector::class));
         $store->invalidate(new Request());
     }
 
@@ -104,7 +110,7 @@ class ReverseProxyCacheTest extends TestCase
         $tracer = $this->createMock(CacheTracer::class);
         $tracer->expects(static::once())->method('get')->willReturn(['theme-config-1', 'system-config-1', 'product-1', 'category-1']);
 
-        $store = new ReverseProxyCache($gateway, $tracer, []);
+        $store = new ReverseProxyCache($gateway, $tracer, [], $this->createMock(CacheTagCollector::class));
 
         $request = new Request();
         $store->write($request, new Response());
@@ -114,7 +120,7 @@ class ReverseProxyCacheTest extends TestCase
     {
         $gateway = $this->createMock(AbstractReverseProxyGateway::class);
         $gateway->expects(static::once())->method('invalidate')->with(['foo']);
-        $store = new ReverseProxyCache($gateway, $this->createMock(CacheTracer::class), []);
+        $store = new ReverseProxyCache($gateway, $this->createMock(CacheTracer::class), [], $this->createMock(CacheTagCollector::class));
         $store(new InvalidateCacheEvent(['foo']));
     }
 }

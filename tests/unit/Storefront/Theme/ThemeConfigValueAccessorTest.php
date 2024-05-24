@@ -8,6 +8,7 @@ use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
 use Shopware\Storefront\Theme\AbstractResolvedConfigLoader;
 use Shopware\Storefront\Theme\ThemeConfigValueAccessor;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * @internal
@@ -32,7 +33,8 @@ class ThemeConfigValueAccessorTest extends TestCase
 
         $themeConfigValueAccessor = new ThemeConfigValueAccessor(
             $themeConfigLoader,
-            false
+            false,
+            new EventDispatcher()
         );
 
         $context = $this->createMock(SalesChannelContext::class);
@@ -57,7 +59,8 @@ class ThemeConfigValueAccessorTest extends TestCase
     {
         $themeConfigValueAccessor = new ThemeConfigValueAccessor(
             $this->createMock(AbstractResolvedConfigLoader::class),
-            true
+            true,
+            new EventDispatcher()
         );
 
         $context = $this->createMock(SalesChannelContext::class);

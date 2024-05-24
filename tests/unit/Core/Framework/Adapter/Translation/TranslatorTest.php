@@ -16,6 +16,7 @@ use Shopware\Core\System\Locale\LanguageLocaleCodeProvider;
 use Shopware\Core\System\Snippet\SnippetService;
 use Shopware\Core\Test\TestDefaults;
 use Symfony\Component\Cache\CacheItem;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\Formatter\MessageFormatterInterface;
@@ -77,7 +78,8 @@ class TranslatorTest extends TestCase
             $connection,
             $localeCodeProvider,
             $snippetServiceMock,
-            false
+            false,
+            new EventDispatcher()
         );
 
         $item = new CacheItem();
@@ -139,7 +141,8 @@ class TranslatorTest extends TestCase
             $connection,
             $this->createMock(LanguageLocaleCodeProvider::class),
             $this->createMock(SnippetService::class),
-            false
+            false,
+            new EventDispatcher()
         );
 
         $snippetSetId = $translator->getSnippetSetId($locale);
@@ -178,7 +181,8 @@ class TranslatorTest extends TestCase
             $connection,
             $this->createMock(LanguageLocaleCodeProvider::class),
             $snippetService,
-            false
+            false,
+            new EventDispatcher()
         );
 
         $translator->injectSettings(TestDefaults::SALES_CHANNEL, Defaults::LANGUAGE_SYSTEM, 'en-GB', Context::createDefaultContext());
@@ -299,7 +303,8 @@ class TranslatorTest extends TestCase
             $this->createMock(Connection::class),
             $this->createMock(LanguageLocaleCodeProvider::class),
             $this->createMock(SnippetService::class),
-            $enabled
+            $enabled,
+            new EventDispatcher()
         );
 
         $translator->trace('foo', function () use ($translator) {

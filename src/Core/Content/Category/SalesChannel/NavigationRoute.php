@@ -140,7 +140,7 @@ class NavigationRoute extends AbstractNavigationRoute
     }
 
     /**
-     * @deprecated v6.7.0 - Will be removed in v6.7.0. Use the `header`, `footer` and `service` methods instead.
+     * @deprecated tag:v6.7.0 - Will be removed in v6.7.0. Use the `header`, `footer` and `service` methods instead.
      */
     #[Route(path: '/store-api/navigation/{activeId}/{rootId}', name: 'store-api.navigation', methods: ['GET', 'POST'], defaults: ['_entity' => 'category'])]
     public function load(

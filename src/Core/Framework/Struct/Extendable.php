@@ -4,6 +4,9 @@ namespace Shopware\Core\Framework\Struct;
 
 trait Extendable
 {
+    /**
+     * @var array<mixed>
+     */
     private array $_data = [];
 
     public function set(string $name, mixed $value): void
@@ -21,6 +24,11 @@ trait Extendable
         return $this->get($name, $default);
     }
 
+    /**
+     * @param string $name
+     * @param array<mixed>|null $default
+     * @return array<mixed>|null
+     */
     public function getArray(string $name, ?array $default = null): ?array
     {
         return $this->get($name, $default);

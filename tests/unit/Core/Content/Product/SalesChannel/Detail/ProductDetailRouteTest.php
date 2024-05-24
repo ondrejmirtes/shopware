@@ -85,7 +85,7 @@ class ProductDetailRouteTest extends TestCase
             $cmsPageLoader,
             new SalesChannelProductDefinition(),
             $this->productCloseoutFilterFactory,
-            $this->eventDispatcher
+            new EventDispatcher()
         );
     }
 

@@ -2,6 +2,7 @@
 
 namespace Shopware\Core\Framework\Adapter\Command;
 
+use Shopware\Core\Framework\Log\Package;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\ConsoleEvents;
@@ -9,12 +10,14 @@ use Symfony\Component\Console\Event\ConsoleSignalEvent;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+#[Package('core')]
 #[AsCommand(name: 'cache:watch:delayed', description: 'Watches the delayed cache keys/tags')]
 class CacheWatchDelayedCommand extends Command
 {
     /**
+     * @internal
      * @param \Redis|\RedisCluster $redis
      */
     public function __construct(
@@ -40,6 +43,7 @@ class CacheWatchDelayedCommand extends Command
         $table = new Table($output);
         $this->render($table, $before);
 
+        // @phpstan-ignore-next-line
         while (true) {
             $current = $this->redis->sMembers('invalidation');
 
@@ -52,6 +56,9 @@ class CacheWatchDelayedCommand extends Command
         }
     }
 
+    /**
+     * @param array<string> $rows
+     */
     private function render(Table $table, array $rows): void
     {
         $table->setHeaders(['Tags at: ' . date('Y-m-d H:i:s')]);

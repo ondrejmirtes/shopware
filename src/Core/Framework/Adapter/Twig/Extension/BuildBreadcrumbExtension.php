@@ -33,9 +33,16 @@ class BuildBreadcrumbExtension extends AbstractExtension
         ];
     }
 
+    /**
+     * @param array<string, mixed> $twigContext
+     *
+     * @return array<string, CategoryEntity>
+     */
     public function getFullBreadcrumbById(array $twigContext, string $categoryId, Context $context): array
     {
         $category = $this->categoryRepository->search(new Criteria([$categoryId]), $context)->getEntities()->first();
+
+        assert($category instanceof CategoryEntity);
 
         return $this->getFullBreadcrumb($twigContext, $category, $context);
     }

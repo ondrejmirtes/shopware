@@ -50,10 +50,12 @@ class AfterSort
         $acc = null;
         if (method_exists($first, 'getId')) {
             $acc = function ($item) {
+                // @phpstan-ignore-next-line  (ensured via method_exists)
                 return $item->getId();
             };
         } elseif (property_exists($first, 'id')) {
             $acc = function ($item) {
+                // @phpstan-ignore-next-line  (ensured via method_exists)
                 return $item->id;
             };
         }
